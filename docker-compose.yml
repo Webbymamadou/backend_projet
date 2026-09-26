@@ -47,18 +47,6 @@ services:
         condition: service_healthy
     restart: always
 
-  jenkins:
-    image: jenkins/jenkins:lts
-    ports:
-     - "8082:8080"
-    volumes:
-      - data_jenkins:/var/home_jenkins
-      - /var/run/docker.sock:/var/run/docker.sock
 
-
-# -------------------------------
-# Volume persistant
-# -------------------------------
 volumes:
   devnestdata:
-  data_jenkins:
