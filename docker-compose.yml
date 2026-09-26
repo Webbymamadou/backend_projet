@@ -1,0 +1,64 @@
+
+services:
+
+  db-service:
+    image: postgres:17
+    container_name: postgres-server-deploy
+    environment:
+      POSTGRES_DB: dbprod
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - devnestdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d dbprod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+
+  pgadmin-service:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-deploy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin1234
+    ports:
+      - "8081:80"
+    depends_on:
+      db-service:
+        condition: service_healthy
+    restart: always
+
+
+  backend-service:
+    build: .
+    container_name: backend-employe-prod
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@db-service:5432/dbprod
+    depends_on:
+      db-service:
+        condition: service_healthy
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+     - "8082:8080"
+    volumes:
+      - data_jenkins:/var/home_jenkins
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+# -------------------------------
+# Volume persistant
+# -------------------------------
+volumes:
+  devnestdata:
+  data_jenkins:
