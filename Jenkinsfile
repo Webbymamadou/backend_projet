@@ -18,7 +18,7 @@ pipeline {
                 checkout scm
             }
         }
-
+        // building docker
         stage('Build Docker Image') {
             steps {
                 bat "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} ."
