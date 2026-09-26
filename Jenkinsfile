@@ -1,7 +1,4 @@
 pipeline {
-
-    // agent any
-
     agent {
         label 'agent-windows'  
        
@@ -41,7 +38,7 @@ pipeline {
                 }
             }
         }
-    // stage docker compose
+
         stage('Deploy with Docker Compose') {
             steps {
                 bat "docker-compose up -d --build"
